@@ -7,10 +7,10 @@ var fn = function () {
     var self = window;
     window.zoro = window.zoro || {};
     const MILLION = 1000000;
-    const DEBRIS_ALERT_THRESHOLD = 10 * MILLION;
-    const PUSH_ALERT_THRESHOLD = 40 * MILLION;
+    const DEBRIS_ALERT_THRESHOLD = 4 * MILLION;
+    const PUSH_ALERT_THRESHOLD = 10 * MILLION;
     const DEBRIS_RERUN_DELAY = 10000;
-    const DEBRIS_RUN_NEXT_SYSTEM_DELAY = 100;
+    const DEBRIS_RUN_NEXT_SYSTEM_DELAY = 1000;
     const AJAX_CALL_CONCURRENCY = 6;
 
     zoro.galaxySystemMap.forEach(function (galaxySystem) {
@@ -45,63 +45,60 @@ var fn = function () {
     };
 
     window._checkExpeditionDebris = function () {
-        var metalElement = $('.uv-galaxy-expo-debris .debris-content').first();
-        var kristalElement = $('.uv-galaxy-expo-debris .debris-content').last();
+        let debris = _getDebrisContent($('#debris16'));
+        $('#expeditionDebrisSlotDebrisContainer #expeditionDebris div:not(.galaxyTooltip)').first().replaceWith(debris);
+        if (debris !== '') {
+            $('#expeditionDebrisSlotDebrisContainer').css('width', 'auto');
+        }
+    };
 
-        var coloredElement = $('.uv-element.uv-galaxy-expo-debris');
+    window._getDebrisContent = function (parentElement, hideTitles) {
+        var metalElement = $(parentElement).find('.debris-content').first();
+        var kristalElement = metalElement.next();
+        var deuElement = kristalElement.next();
+
         if (metalElement && metalElement.text()) {
             var metalValue = window._toNumber(metalElement.text().split(':')[1]);
             var kristalValue = window._toNumber(kristalElement.text().split(':')[1]);
+            var deuValue = window._toNumber(deuElement.text().split(':')[1]);
 
-            window._applyColors(metalValue, kristalValue, coloredElement, coloredElement);
+            return `<span class="${_calculateColorRed(metalValue, 1 * MILLION, 5, 10)}">${!hideTitles ? 'Metal: ' : 'M:'}` + _toKMNumber(metalValue) + '</span>' +
+                `<br><span class="${_calculateColorRed(kristalValue, 1 * MILLION, 5, 10)}">${!hideTitles ? 'Kristal: ' : 'K:'}` + _toKMNumber(kristalValue) + '</span>' +
+                `<br><span class="${_calculateColorRed(deuValue, 1 * MILLION, 5, 10)}">${!hideTitles ? 'Deu: ' : 'D:'}` + _toKMNumber(deuValue) + '</span>';
         }
-    };
+
+        return '';
+    }
 
     window._checkGalaxyDebris = function () {
-        var galaxyDebrisElements = $('.uv-galaxy-debris:not(.zoro-color)');
+        $('.galaxyRow .cellDebris .galaxyTooltip').each(function (index) {
+            let debrisCel = $(this).parent().parent();
+            debrisCel.parent().css('display', 'block');
+            debrisCel.parent().css('font-size', '74%');
 
-        if (galaxyDebrisElements && galaxyDebrisElements.length > 0) {
-            galaxyDebrisElements.each(function (index, debrisElement) {
-                debrisElement = $(debrisElement);
-                var subFields = debrisElement.find('div:not(.debrisField)');
-                if (subFields.length > 0) {
-                    var metalElement = subFields.first();
-                    var krisalElement = subFields.last();
-
-                    var metalStr = metalElement.text().split(' ');
-                    var kristalStr = krisalElement.text().split(' ');
-
-                    var metalValue = _toNumber(metalStr[0]);
-                    var kristalValue = _toNumber(kristalStr[0]);
-
-                    if (metalValue != 0) {
-                        metalValue *= (metalStr[1] == 'K' ? 1000 : (metalStr[1] == 'M' ? 1000000 : 1))
-                    }
-
-                    if (kristalValue != 0) {
-                        kristalValue *= (kristalStr[1] == 'K' ? 1000 : (kristalStr[1] == 'M' ? 1000000 : 1))
-                    }
-
-                    window._applyColors(metalValue, kristalValue, debrisElement, subFields);
-                }
-            });
-        }
+            if (!debrisCel.text().startsWith('M:')) {
+                debrisCel.find('.microdebris').prepend(_getDebrisContent($(this), true));
+                debrisCel.find('.microdebris').css('background', 'none')
+            }
+        })
     };
 
-    window._processFoundDebris = function (galaxy, system, metal, kristal, recyclerValue, planet) {
-        var result = _addLargeDebris(galaxy, system, planet, metal, kristal, recyclerValue);
+    window._processFoundDebris = function (galaxy, system, metal, kristal, deuterium, recyclerValue, planet) {
+        var result = _addLargeDebris(galaxy, system, planet, metal, kristal, deuterium, recyclerValue);
 
         if (result) {
-            var message = galaxy + ':' + system + ':' + planet + ' , ' + parseInt(metal / MILLION) + 'M metal, ' + parseInt(kristal / MILLION) + 'M kristal!';
-            var sendNotif = (planet == 16 && metal + kristal > PUSH_ALERT_THRESHOLD) || (_isNearToMyPlanets(galaxy, system, 10) && metal + kristal > PUSH_ALERT_THRESHOLD * 5);
+            var message = galaxy + ':' + system + ':' + planet + ' , ' + _toKMNumber(metal) + ' metal, ' + _toKMNumber(kristal) + ' kristal, ' + _toKMNumber(deuterium) + ' deuterium, !';
+            let totalValue = metal + kristal + deuterium;
+            var sendNotif = (planet == 16 && totalValue > PUSH_ALERT_THRESHOLD) || (_isNearToMyPlanets(galaxy, system, 10) && totalValue > PUSH_ALERT_THRESHOLD * 5);
 
-            _addDesktopAlert('OGame Large Debris Found', message, _getGalaxyUrl(galaxy, system), sendNotif, metal + kristal > 200 * MILLION ? 0 : -1, _isNearToMyPlanets(galaxy, system) ? 'cashregister' : null);
+            _addDesktopAlert('OGame Large Debris Found', message, _getGalaxyUrl(galaxy, system), sendNotif, totalValue > 200 * MILLION ? 0 : -1, _isNearToMyPlanets(galaxy, system) ? 'cashregister' : null);
         }
     };
 
     window._addGalaxyDebrisInterval = function _addGalaxyDebrisInterval() {
         var self = window;
 
+        // Replaces debris icon with actual values
         setInterval(function () {
             self._checkExpeditionDebris();
             self._checkGalaxyDebris();
@@ -141,25 +138,36 @@ var fn = function () {
             console.log('Debris check stopped at system ' + debrisStatus.currentSystem + ' with found debris count ' + debrisStatus.foundDebrisCount + ' in ' + (new Date().getTime() - debrisStatus.lastTime) / 1000 + ' sec.');
         } else {
             _getGalaxyDataWithAjax(debrisStatus.galaxy, debrisStatus.currentSystem, function (data) {
-                var found1 = _checkAjaxExpeditionContent(data, debrisStatus.galaxy, debrisStatus.currentSystem, debrisStatus);
-                var found2 = _checkAjaxPlanetDebrisContent(data, debrisStatus.galaxy, debrisStatus.currentSystem, debrisStatus);
-                if (!found1 && !found2) {
-                    _cleanLargeDebrisAtSystem(debrisStatus.galaxy, debrisStatus.currentSystem, true);
+                if (data) {
+                    var found1 = _checkAjaxExpeditionContent(data, debrisStatus.galaxy, debrisStatus.currentSystem, debrisStatus);
+                    var found2 = _checkAjaxPlanetDebrisContent(data, debrisStatus.galaxy, debrisStatus.currentSystem, debrisStatus);
+                    if (!found1 && !found2) {
+                        _cleanLargeDebrisAtSystem(debrisStatus.galaxy, debrisStatus.currentSystem, true);
+                    }
                 }
 
                 setTimeout(function () {
                     debrisStatus.currentSystem++;
                     _storeDebrisCheck(debrisStatus);
                     _checkDebrisThroughGalaxyRecursive(debrisStatus, rerun);
-                }, Math.random() * DEBRIS_RUN_NEXT_SYSTEM_DELAY);
+                }, DEBRIS_RUN_NEXT_SYSTEM_DELAY);
             }, function () {
                 _continueDebrisCheck();
             });
         }
     };
 
+    window._getSingleGalaxyData = function (galaxy, system) {
+        _getGalaxyDataWithAjax(galaxy, system, (data) => {
+            if (data) {
+                _checkAjaxExpeditionContent(data, galaxy, system, {});
+                _checkAjaxPlanetDebrisContent(data, galaxy, system, {});
+            }
+        })
+    }
+
     window._getGalaxyDataWithAjax = function (galaxy, system, callback, lobbyCallback) {
-        $.post('/game/index.php?page=ingame&component=galaxyContent&ajax=1', {galaxy: galaxy, system: system})
+        $.post('/game/index.php?page=ingame&component=galaxy&action=fetchGalaxyContent&ajax=1&asJson=1', {galaxy: galaxy, system: system})
             .done(function (dataStr) {
                 var data = JSON.parse(dataStr);
                 if (callback) {
@@ -167,8 +175,10 @@ var fn = function () {
                 }
             })
             .fail(function (xhr, status, error) {
-                if (status == 'error') {
+                if (status == 'error' && xhr.status !== 503) {
                     _handleLobbyRedirect(lobbyCallback);
+                } else if (callback) {
+                    callback(null);
                 }
             });
     }
@@ -215,11 +225,13 @@ var fn = function () {
             var system = potentialDebrisCheck.potentials[index].system;
 
             _getGalaxyDataWithAjax(galaxy, system, function (data) {
-                var found = _checkAjaxExpeditionContent(data, galaxy, system);
-                if (found) {
-                    _updatePotentialDebrisItem(galaxy, system);
-                } else {
-                    _cleanLargeDebrisAtSystem(galaxy, system, true, true);
+                if (data) {
+                    var found = _checkAjaxExpeditionContent(data, galaxy, system);
+                    if (found) {
+                        _updatePotentialDebrisItem(galaxy, system);
+                    } else {
+                        _cleanLargeDebrisAtSystem(galaxy, system, true, true);
+                    }
                 }
 
                 setTimeout(function () {
@@ -233,14 +245,13 @@ var fn = function () {
     };
 
     window._checkAjaxPlanetDebrisContent = function (data, galaxy, system, debrisStatus) {
-        var planetDebrises = $(data.galaxy).find('td.debris .galaxyTooltip .ListLinks');
         var found = false;
-        if (planetDebrises.length > 0) {
-            planetDebrises.each(function (index, debrisElement) {
-                var parentRow = $(debrisElement).parent().parent().parent();
-                var debrisFound = _checkDebrisPopup($(debrisElement), galaxy, system, parentRow.parent().children().index(parentRow) + 1, debrisStatus);
-                if (debrisFound) {
-                    found = true;
+        if (data.system.galaxyContent.length > 0) {
+            data.system.galaxyContent.forEach(function (rowData, index) {
+                for (var i = 0; i < rowData.planets.length; i++) {
+                    if (rowData.planets[i].planetType === 2) { // Debris field
+                        found = _checkDebrisData(rowData.planets[i].resources, galaxy, system, index + 1, debrisStatus);
+                    }
                 }
             });
         }
@@ -249,25 +260,30 @@ var fn = function () {
     }
 
     window._checkAjaxExpeditionContent = function (data, galaxy, system, debrisStatus) {
-        var debrisElement = $(data.galaxy).find('#debris16.galaxyTooltip .ListLinks');
+        var debrisData = data.system.galaxyContent.length > 15 ? data.system.galaxyContent[15].planets.resources : null;
         var found = false;
-        if (debrisElement.length > 0) {
-            found = _checkDebrisPopup(debrisElement, galaxy, system, 16, debrisStatus);
+        if (debrisData) {
+            found = _checkDebrisData(debrisData, galaxy, system, 16, debrisStatus);
         }
 
         return found;
     }
 
-    window._checkDebrisPopup = function (debrisElement, galaxy, system, planet, debrisStatus) {
-        var metalValue = _toNumber(debrisElement.find('.debris-content').first().text().split(':')[1]);
-        var kristalValue = _toNumber(debrisElement.find('.debris-content').last().text().split(':')[1]);
-        var recyclerValue = _toNumber(debrisElement.find('.debris-recyclers').first().text().split(':')[1]);
+    window._checkDebrisData = function (debrisResources, galaxy, system, planet, debrisStatus) {
+        if (!debrisResources) {
+            return false;
+        }
+        var metalValue = parseInt(debrisResources.metal.amount);
+        var kristalValue = parseInt(debrisResources.crystal.amount);
+        var deuteriumValue = parseInt(debrisResources.deuterium.amount);
+        var recyclerValue = debrisResources.requiredShips;
 
         var found = false;
-        let total = kristalValue + metalValue;
-        if (((planet == 16 || _isNearToMyPlanets(galaxy, system)) && total > DEBRIS_ALERT_THRESHOLD) || total > DEBRIS_ALERT_THRESHOLD * 4) {
+        let total = kristalValue + metalValue + deuteriumValue;
+        if (((planet === 16 || _isNearToMyPlanets(galaxy, system)) && total > DEBRIS_ALERT_THRESHOLD) || total > DEBRIS_ALERT_THRESHOLD * 4) {
             found = true;
-            _processFoundDebris(galaxy, system, metalValue, kristalValue, recyclerValue, planet);
+            console.log('Recording large debris with total ' + total)
+            _processFoundDebris(galaxy, system, metalValue, kristalValue, deuteriumValue, recyclerValue, planet);
             if (debrisStatus) {
                 debrisStatus.foundDebrisCount++;
                 _storeDebrisCheck(debrisStatus);

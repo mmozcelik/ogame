@@ -16,24 +16,15 @@ var fn = function () {
         lobbyInterval: null,
         lobbyCheckMaster: false,
         galaxySystemMap: [
-            [1, 1, 250],
-            [1, 251, 499],
-            [2, 1, 250],
-            [2, 251, 499],
-            [3, 1, 250],
-            [3, 251, 499],
-            [4, 1, 250],
-            [4, 251, 499],
-            [5, 1, 250],
-            [5, 251, 499],
-            [6, 1, 250],
-            [6, 251, 499],
-            [7, 1, 250],
-            [7, 251, 499],
-            [8, 1, 250],
-            [8, 251, 499],
-            [9, 1, 250],
-            [9, 251, 499]
+            [1, 1, 499],
+            [2, 1, 499],
+            [3, 1, 499],
+            [4, 1, 499],
+            [5, 1, 499],
+            [6, 1, 499],
+            [7, 1, 499],
+            [8, 1, 499],
+            [9, 1, 499]
         ],
         potentialLargeDebrisCoord: [
             // [2, 147],
@@ -51,14 +42,20 @@ var fn = function () {
     const LARGE_DEBRIS_BLACKLIST_KEY = 'zoro-debris-blacklist';
     const NEAR_TO_PLANET_THRESHOLD = 20;
     const MINUTES = 60 * 1000;
+    const KILO = 1000;
+    const MILLION = KILO * KILO;
 
     window._storeDebrisCheck = function (debrisCheck) {
         localStorage.setItem('debris_check_' + debrisCheck.galaxy + ':' + debrisCheck.startSystem + ':' + debrisCheck.endSystem, JSON.stringify(debrisCheck));
     };
 
     window._toNumber = function (str) {
-        return parseInt(str.replaceAll('.', ''));
+        return parseInt(str.replaceAll('.', '').replaceAll(',', ''));
     };
+
+    window._toKMNumber = function (value) {
+        return value < MILLION ? number_format(value / KILO, 1) + 'k' : (value < KILO * MILLION ? number_format(value / MILLION, 1) + 'm' : number_format(value / (KILO * MILLION), 1) + 'M');
+    }
 
     window._calculateColorRed = function (value, baseThreshold, level1 = 3, level2 = 6) {
         var clazz = '';
@@ -183,7 +180,7 @@ var fn = function () {
     window._initZoroPanel = function () {
         var zoroPanelElement = document.createElement('div');
         zoroPanelElement.className = 'zoro-check-debris';
-        document.body.appendChild(zoroPanelElement);
+        $('#pageContent').append(zoroPanelElement);
 
         var debrisListElement = document.createElement('ul');
         debrisListElement.className = 'zoro-debris-list';
@@ -284,7 +281,7 @@ var fn = function () {
         debrisAnchorElement.className = 'zoro-debris-item' + (debrisItem.sent ? ' text-blue' : '') + (blacklisted ? ' text-red' : '');
         debrisAnchorElement.setAttribute('href', _getGalaxyUrl(debrisItem.galaxy, debrisItem.system));
         debrisAnchorElement.innerText = _getCoordStr(debrisItem.galaxy, debrisItem.system, debrisItem.planet)
-            + ' ' + number_format(debrisItem.metal / 1000000, 1) + 'M Metal + ' + number_format(debrisItem.kristal / 1000000, 1) + 'M Kristal -- '
+            + ' ' + _toKMNumber(debrisItem.metal) + ' Metal + ' + _toKMNumber(debrisItem.kristal) + ' Kristal -- '
             + _getTimeDiff(debrisItem.addedAt) + (debrisItem.fetched ? ' *' : '');
         debrisItemElement.appendChild(debrisAnchorElement);
 
@@ -442,7 +439,7 @@ var fn = function () {
         return diff;
     };
 
-    window._addLargeDebris = function (galaxy, system, planet, metal, kristal, recycler) {
+    window._addLargeDebris = function (galaxy, system, planet, metal, kristal, deuterium, recycler) {
         var existing = _getLargeDebris(galaxy, system, planet);
         if (!existing) {
             var items = _getLargeDebrisList();
@@ -453,6 +450,7 @@ var fn = function () {
                 planet: planet,
                 metal: metal,
                 kristal: kristal,
+                deuterium: deuterium,
                 addedAt: new Date().getTime(),
                 recycler: recycler,
                 fetched: false
@@ -618,7 +616,7 @@ var fn = function () {
             zoro.lobbyInterval = setInterval(function () {
                 zoro.lobbyCheckRetry++;
 
-                $.post('/game/index.php?page=ingame&component=galaxyContent&ajax=1', {galaxy: 1, system: 1})
+                $.post('/game/index.php?page=ingame&component=galaxy&action=fetchGalaxyContent&ajax=1&asJson=1', {galaxy: 1, system: 1})
                     .done(function () {
                         if (lobbyCallback) {
                             lobbyCallback();
@@ -787,7 +785,7 @@ var fn = function () {
         setInterval(function () {
             if (new Date().getTime() - _getLastNotificationTime() > 900000) {
                 let status = _getProcessStatuses(true);
-                _addDesktopAlert('Checker Statuses', status, null, true, status.indexOf('Problem') !== -1 ? 0 : -1);
+                // _addDesktopAlert('Checker Statuses', status, null, true, status.indexOf('Problem') !== -1 ? 0 : -1);
             }
         }, 900000); // 15 mins
     };

@@ -87,40 +87,27 @@ span.status_abbr_inactive {
     right: 60px;
 }
 
-#planetbarcomponent #myPlanets {
-    width: 347px !important;
-}
-
-#planetbarcomponent #rechts #myPlanets .smallplanet {
-    float: left;
-}
-
 .uv-idletimer-toggle {
     display: none;
 }
 
-#ingamepage #pageContent,
-.ogame #pageContent {
-    width: 1000px;
-    margin-left: 400px;
-}
-
 #advicebarcomponent div#banner_skyscraper {
     position: absolute;
-    top: -400px;
     left: 1205px;
 }
 
 .zoro-check-debris {
     position: fixed;
     left: 0px;
-    top: 50px;
+    top: 600px;
     display: grid;
     z-index: 100000;
+    font-size: 80%;
 }
 
 .zoro-check-debris > div {
-    width: 250px;
+    width: auto;
+    max-width:200px;
 }
 
 .zoro-check-debris li {

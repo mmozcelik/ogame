@@ -90,6 +90,7 @@ var fn = function () {
             var hostileEvents = fleetElement.find('.countDown span.hostile');
 
             if (hostileEvents.length > 0) {
+                console.log('We found an hostile event!');
                 hostileEvents.each(function (index, element) {
                     element = $(element);
                     var rowElement = element.closest('tr.eventFleet');
@@ -104,6 +105,7 @@ var fn = function () {
                     _addFleetEvent(origin, dest, eventId, missionTypeStr, planetType);
                 });
             } else {
+                console.log('No hostile event yet!');
                 localStorage.removeItem('fleet-events');
             }
 
@@ -168,7 +170,7 @@ var fn = function () {
                 }
             })
             .fail(function (xhr, status, error) {
-                if (status == 'error') {
+                if (status == 'error' && xhr.status !== 503) {
                     _handleLobbyRedirect(lobbyCallback);
                 }
             });
