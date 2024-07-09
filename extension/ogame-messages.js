@@ -79,6 +79,11 @@ var fn = function () {
 
         setInterval(function () {
             _checkMessageContents();
+            $('.resourcesTotal.tooltipRight').each(function () {
+                if (!$(this).parent().find('.zoro-extra-field').length) {
+                    $(this).parent().append('<span class="zoro-extra-field">' + $(this).attr('data-tooltip-title').replaceAll('<br/>', '\t |\t ') + '</span>')
+                }
+            })
         }, 100);
     };
     window._addMessagesInterval();

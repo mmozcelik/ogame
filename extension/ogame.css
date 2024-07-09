@@ -97,9 +97,9 @@ span.status_abbr_inactive {
 }
 
 .zoro-check-debris {
-    position: fixed;
+    position: absolute;
     left: 0px;
-    top: 600px;
+    top: 800px;
     display: grid;
     z-index: 100000;
     font-size: 80%;
@@ -123,10 +123,37 @@ span.status_abbr_inactive {
     cursor: pointer;
 }
 
-.zoro-galaxy-run-button {
-    width: 13%;
+.zoro-galaxy-run-label{
+    margin-left: 10px;
 }
 
-.zoro-galaxy-run-label{
+.zoro-button {
+    width: fit-content;
+    font-size: 11px;
+}
+
+.zoro-skin .cellPlayerName {
+    font-size: 9px;
+}
+
+.zoro-visible-rank {
+    font-size: 8px;
+}
+.zoro-skin .espionageInfo .allianceClassInfo,
+.zoro-skin .espionageInfo .msgHeadItem .msgTitle,
+.zoro-skin .espionageInfo .msgHeadItem .underTitle {
+    display: none !important;
+}
+.zoro-skin .espionageInfo .msgHead {
+    position: absolute;
+    float: right;
+    right: 0;
+}
+
+.zoro-skin .espionageInfo .basicInfo .activityInfo {
+    padding-right: 200px !important;
+}
+
+.zoro-fleet-button {
     margin-left: 10px;
 }

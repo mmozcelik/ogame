@@ -204,6 +204,7 @@ var fn = function () {
         if (_getLargeDebrisList().length > 0) {
             var element = document.createElement('button');
             element.innerHTML = "Clean Debris List";
+            element.className = 'zoro-button';
             element.setAttribute('onclick', '_cleanDebrisList()');
             zoroPanelElement.appendChild(element);
         }
@@ -319,6 +320,7 @@ var fn = function () {
         element.setAttribute('href', '#');
         element.setAttribute('onclick', '_setDebrisSystemWhitelisted(event, ' + debrisItem.galaxy + ',' + debrisItem.system + ')');
         element.innerText = 'W';
+        element.title = 'Whitelist';
         debrisItemElement.appendChild(element);
 
         var element = document.createElement('a');
@@ -326,6 +328,7 @@ var fn = function () {
         element.setAttribute('href', '#');
         element.setAttribute('onclick', '_setDebrisSystemBlacklisted(event, ' + debrisItem.galaxy + ',' + debrisItem.system + ')');
         element.innerText = 'B';
+        element.title = 'Blacklist';
         debrisItemElement.appendChild(element);
 
         if (debrisItem.planet === 16 && !_checkPotentialLargeDebrisExists(debrisItem.galaxy, debrisItem.system)) {
@@ -334,6 +337,7 @@ var fn = function () {
             element.setAttribute('href', '#');
             element.setAttribute('onclick', '_addToPotentialLargeDebris(event, ' + debrisItem.galaxy + ',' + debrisItem.system + ')');
             element.innerText = 'P';
+            element.title = 'Add to potential large debris';
             debrisItemElement.appendChild(element);
         }
 
@@ -350,7 +354,7 @@ var fn = function () {
         runCheckDebrisLineElement.id = 'debris-line-' + debrisStatus.galaxy + '-' + debrisStatus.startSystem + '-' + debrisStatus.endSystem;
 
         var element = document.createElement('button');
-        element.style = 'width: 90px;';
+        element.className = 'zoro-button';
         element.innerHTML = "G" + debrisStatus.galaxy + ':' + debrisStatus.startSystem + ':' + debrisStatus.endSystem;
         if (autoCheckDebris) {
             element.setAttribute('onclick', '_checkDebrisThroughGalaxy(' + debrisStatus.galaxy + ',' + debrisStatus.startSystem + ', ' + debrisStatus.endSystem + ', true)');
@@ -364,24 +368,24 @@ var fn = function () {
 
         element = document.createElement('label');
         element.innerHTML = debrisStatus.foundDebrisCount;
-        element.style = 'margin-left:20px;'
+        element.style = 'margin-left:10px;'
         runCheckDebrisLineElement.appendChild(element);
 
         element = document.createElement('label');
         element.innerHTML = debrisStatus.currentSystem;
-        element.style = 'margin-left:20px;'
+        element.style = 'margin-left:10px;'
         runCheckDebrisLineElement.appendChild(element);
 
         if (autoCheckDebris) {
             if (debrisStatus.runningDebris) {
                 element = document.createElement('button');
-                element.style = 'margin-left: 20px;';
+                element.style = 'margin-left: 10px;';
                 element.innerHTML = "Stop";
                 element.setAttribute('onclick', '_stopDebrisCheck(' + debrisStatus.galaxy + ',' + debrisStatus.startSystem + ', ' + debrisStatus.endSystem + ')');
                 runCheckDebrisLineElement.appendChild(element);
             } else {
                 element = document.createElement('button');
-                element.style = 'margin-left: 20px;';
+                element.style = 'margin-left: 10px;';
                 element.innerHTML = "Start";
                 element.setAttribute('onclick', '_startDebrisCheck(' + debrisStatus.galaxy + ',' + debrisStatus.startSystem + ', ' + debrisStatus.endSystem + ')');
                 runCheckDebrisLineElement.appendChild(element);
@@ -398,6 +402,7 @@ var fn = function () {
         var element = document.createElement('button');
         element.style = 'width: 90px;';
         element.innerHTML = "Potentials";
+        element.className = 'zoro-button';
         runCheckDebrisLineElement.appendChild(element);
 
         element = document.createElement('label');

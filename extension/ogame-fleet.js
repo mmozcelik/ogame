@@ -16,61 +16,105 @@ var fn = function () {
         var zoroFleetElement = document.createElement('div');
         zoroPanelElement.appendChild(zoroFleetElement);
 
+        var zoroSaveFleetCountElement = document.createElement('div');
+        zoroFleetElement.appendChild(zoroSaveFleetCountElement);
+
+        var zoroSaveFleetCountButtonElement = document.createElement('button');
+        zoroSaveFleetCountButtonElement.innerHTML = "Save Fleet Count";
+        zoroSaveFleetCountButtonElement.className = 'zoro-button zoro-fleet-button';
+        zoroSaveFleetCountButtonElement.setAttribute('onclick', '_saveShipCounts()');
+        zoroSaveFleetCountElement.appendChild(zoroSaveFleetCountButtonElement);
+
+        var zoroSaveFleetCountTextElement = document.createElement('span');
+        zoroSaveFleetCountTextElement.innerHTML = _getLastStoredShips() ? _getLastStoredShips().length + ' ships' : " Nothing Saved";
+        zoroSaveFleetCountTextElement.className = 'zoro-fleet-count-text';
+        zoroSaveFleetCountElement.appendChild(zoroSaveFleetCountTextElement);
+
+        var zoroDeployElement = document.createElement('div');
+        zoroFleetElement.appendChild(zoroDeployElement);
+        zoroDeployElement.append('Deploy');
+
+        var zoroTransportElement = document.createElement('div');
+        zoroFleetElement.appendChild(zoroTransportElement);
+        zoroTransportElement.append('Transport');
+
         if (fleetDispatcher.currentPlanet.type === fleetDispatcher.fleetHelper.PLANETTYPE_PLANET) {
+            zoroDeployElement.append(' To Moon');
+            zoroTransportElement.append(' To Moon');
             var element = document.createElement('button');
-            element.innerHTML = "Deploy all resources To Moon";
+            element.innerHTML = "Resources";
+            element.className = 'zoro-button zoro-fleet-button';
             element.setAttribute('onclick', '_sendCarriers(fleetDispatcher.fleetHelper.PLANETTYPE_MOON, fleetDispatcher.fleetHelper.MISSION_DEPLOY, true)');
-            zoroFleetElement.appendChild(element);
+            zoroDeployElement.appendChild(element);
 
             element = document.createElement('button');
-            element.innerHTML = "Deploy All Ships To Moon";
+            element.innerHTML = "Ships";
+            element.className = 'zoro-button zoro-fleet-button';
             element.setAttribute('onclick', '_sendAllShips(fleetDispatcher.fleetHelper.PLANETTYPE_MOON, fleetDispatcher.fleetHelper.MISSION_DEPLOY, false)');
-            zoroFleetElement.appendChild(element);
+            zoroDeployElement.appendChild(element);
 
             element = document.createElement('button');
-            element.innerHTML = "Deploy ships&resources To Moon";
+            element.innerHTML = "S & R";
+            element.title = "Ships&Resources";
+            element.className = 'zoro-button zoro-fleet-button';
             element.setAttribute('onclick', '_sendAllShips(fleetDispatcher.fleetHelper.PLANETTYPE_MOON, fleetDispatcher.fleetHelper.MISSION_DEPLOY, true)');
-            zoroFleetElement.appendChild(element);
+            zoroDeployElement.appendChild(element);
 
             element = document.createElement('button');
-            element.innerHTML = "Transport All Ships To Moon";
+            element.innerHTML = "All Ships";
+            element.className = 'zoro-button zoro-fleet-button';
             element.setAttribute('onclick', '_sendAllShips(fleetDispatcher.fleetHelper.PLANETTYPE_MOON, fleetDispatcher.fleetHelper.MISSION_TRANSPORT, false)');
-            zoroFleetElement.appendChild(element);
+            zoroTransportElement.appendChild(element);
 
             element = document.createElement('button');
-            element.innerHTML = "Transport ships&resources To Moon";
+            element.innerHTML = "Ships&Resources";
+            element.className = 'zoro-button zoro-fleet-button';
             element.setAttribute('onclick', '_sendAllShips(fleetDispatcher.fleetHelper.PLANETTYPE_MOON, fleetDispatcher.fleetHelper.MISSION_TRANSPORT, true)');
-            zoroFleetElement.appendChild(element);
+            zoroTransportElement.appendChild(element);
         } else {
+            zoroDeployElement.append(' To Planet');
+            zoroTransportElement.append(' To Planet');
             var element = document.createElement('button');
-            element.innerHTML = "Deploy Carriers To Planet";
+            element.innerHTML = "Resources";
+            element.className = 'zoro-button zoro-fleet-button';
             element.setAttribute('onclick', '_sendCarriers(fleetDispatcher.fleetHelper.PLANETTYPE_PLANET, fleetDispatcher.fleetHelper.MISSION_DEPLOY)');
-            zoroFleetElement.appendChild(element);
+            zoroDeployElement.appendChild(element);
 
             var element = document.createElement('button');
-            element.innerHTML = "Deploy ships To Planet";
+            element.innerHTML = "Ships";
+            element.className = 'zoro-button zoro-fleet-button';
             element.setAttribute('onclick', '_sendAllShips(fleetDispatcher.fleetHelper.PLANETTYPE_PLANET, fleetDispatcher.fleetHelper.MISSION_DEPLOY, false)');
-            zoroFleetElement.appendChild(element);
+            zoroDeployElement.appendChild(element);
+
+            element = document.createElement('button');
+            element.innerHTML = "Ships w/ Count";
+            element.className = 'zoro-button zoro-fleet-button';
+            element.setAttribute('onclick', '_sendAllShips(fleetDispatcher.fleetHelper.PLANETTYPE_PLANET, fleetDispatcher.fleetHelper.MISSION_DEPLOY, false, true)');
+            zoroDeployElement.appendChild(element);
 
             var element = document.createElement('button');
-            element.innerHTML = "Deploy ships&resources To Planet";
+            element.innerHTML = "S & R";
+            element.className = 'zoro-button zoro-fleet-button';
             element.setAttribute('onclick', '_sendAllShips(fleetDispatcher.fleetHelper.PLANETTYPE_PLANET, fleetDispatcher.fleetHelper.MISSION_DEPLOY, true)');
-            zoroFleetElement.appendChild(element);
+            zoroDeployElement.appendChild(element);
 
             var element = document.createElement('button');
-            element.innerHTML = "Transport Resources To Planet";
+            element.innerHTML = "Resources";
+            element.className = 'zoro-button zoro-fleet-button';
             element.setAttribute('onclick', '_sendCarriers(fleetDispatcher.fleetHelper.PLANETTYPE_PLANET, fleetDispatcher.fleetHelper.MISSION_TRANSPORT, true)');
-            zoroFleetElement.appendChild(element);
+            zoroTransportElement.appendChild(element);
 
             var element = document.createElement('button');
-            element.innerHTML = "Transport All Ships To Planet";
+            element.innerHTML = "All Ships";
+            element.className = 'zoro-button zoro-fleet-button';
             element.setAttribute('onclick', '_sendAllShips(fleetDispatcher.fleetHelper.PLANETTYPE_PLANET, fleetDispatcher.fleetHelper.MISSION_TRANSPORT, false)');
-            zoroFleetElement.appendChild(element);
+            zoroTransportElement.appendChild(element);
 
             var element = document.createElement('button');
-            element.innerHTML = "Transport Ships&Resources To Planet";
+            element.innerHTML = "Ships&Resources";
+            element.className = 'zoro-button zoro-fleet-button';
             element.setAttribute('onclick', '_sendAllShips(fleetDispatcher.fleetHelper.PLANETTYPE_PLANET, fleetDispatcher.fleetHelper.MISSION_TRANSPORT, true)');
-            zoroFleetElement.appendChild(element);
+            zoroTransportElement.appendChild(element);
         }
 
         var element = document.createElement('button');
@@ -79,6 +123,20 @@ var fn = function () {
         zoroFleetElement.appendChild(element);
 
 
+    }
+
+    window._saveShipCounts = function () {
+        var ships = [];
+        fleetDispatcher.shipsOnPlanet.forEach(function (ship) {
+            ships.push({...ship});
+        });
+        localStorage.setItem('lastStoredShips', JSON.stringify(ships))
+        $('.zoro-fleet-count-text').replaceWith(ships.length + ' ships')
+    }
+
+    window._getLastStoredShips = function () {
+        var lastShips = localStorage.getItem('lastStoredShips')
+        return lastShips ? JSON.parse(lastShips) : null;
     }
 
     window._checkForFleet = function () {
@@ -213,10 +271,14 @@ var fn = function () {
             });
     }
 
-    window._sendAllShips = function (planetType, mission, includeResources) {
+    window._sendAllShips = function (planetType, mission, includeResources, useStorageForShips) {
         var params = _prepareSendFleetParams(planetType, mission);
-        fleetDispatcher.shipsOnPlanet.forEach(function (ship) {
-            params['am' + ship.id] = ship.number;
+        var ships = fleetDispatcher.shipsOnPlanet;
+        if (useStorageForShips && localStorage.getItem('lastStoredShips')) {
+            ships = JSON.parse(localStorage.getItem('lastStoredShips'));
+        }
+        ships.forEach(function (ship) {
+            params['am' + ship.id] = ship.id === 210 && ship.number > 1 ? ship.number - 1 : ship.number;
         });
 
         if (includeResources) {
@@ -245,14 +307,17 @@ var fn = function () {
                 shipsSetParams.metal = totalCapacity;
                 shipsSetParams.crystal = 0;
                 shipsSetParams.deuterium = 0;
+                shipsSetParams.food = 0;
             } else if (metal + crystal > totalCapacity) {
                 shipsSetParams.metal = metal;
                 shipsSetParams.crystal = totalCapacity - metal;
                 shipsSetParams.deuterium = 0;
+                shipsSetParams.food = 0;
             } else {
                 shipsSetParams.metal = metal;
                 shipsSetParams.crystal = crystal;
                 shipsSetParams.deuterium = totalCapacity - metal - crystal;
+                shipsSetParams.food = 0;
             }
             if (notifyForRemainingResources) {
                 alert('Ship capacity is lower than existing resources, doing transport, please do send fleet again.');
@@ -262,6 +327,7 @@ var fn = function () {
             shipsSetParams.metal = metal;
             shipsSetParams.crystal = crystal;
             shipsSetParams.deuterium = deu;
+            shipsSetParams.food = 0;
 
             return true;
         }
@@ -273,7 +339,7 @@ var fn = function () {
 
     window._prepareSendFleetParams = function (type, mission) {
         return {
-            token: fleetDispatcher.fleetSendingToken,
+            token: token,
             galaxy: window.currentPlanet.galaxy,
             system: window.currentPlanet.system,
             position: window.currentPlanet.position,
@@ -281,12 +347,15 @@ var fn = function () {
             metal: 0,
             crystal: 0,
             deuterium: 0,
-            prioMetal: 1,
-            prioCrystal: 2,
-            prioDeuterium: 3,
+            food: 0,
+            prioFood: 1,
+            prioMetal: 2,
+            prioCrystal: 3,
+            prioDeuterium: 4,
             mission: mission,
             speed: 10,
             retreatAfterDefenderRetreat: 0,
+            lootFoodOnAttack: 1,
             union: 0,
             holdingtime: 0
         };
@@ -352,7 +421,14 @@ var fn = function () {
     }
 
     window._checkTarget = function () {
-        return $.post('/game/index.php?page=ingame&component=fleetdispatch&action=checkTarget&ajax=1&asJson=1', {am209: 1, galaxy: currentPlanet.galaxy, system: currentPlanet.system, position: currentPlanet.position, type: 2, union: 0});
+        return $.post('/game/index.php?page=ingame&component=fleetdispatch&action=checkTarget&ajax=1&asJson=1', {
+            am209: 1,
+            galaxy: currentPlanet.galaxy,
+            system: currentPlanet.system,
+            position: currentPlanet.position,
+            type: 2,
+            union: 0
+        });
     }
 
     window._sendExpedition = function () {

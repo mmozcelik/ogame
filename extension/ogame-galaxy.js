@@ -102,6 +102,14 @@ var fn = function () {
         setInterval(function () {
             self._checkExpeditionDebris();
             self._checkGalaxyDebris();
+            $('.playerName').each(function () {
+                if (!$(this).parent().find('.zoro-visible-rank').length) {
+                    let html = $(this).find('.rank').html();
+                    if (html) {
+                        $(this).parent().append('(<pre class="zoro-visible-rank">' + html.replace('Sıralama: \n', '').trim() + '</pre>)')
+                    }
+                }
+            })
         }, 100);
     };
 
@@ -282,7 +290,7 @@ var fn = function () {
         let total = kristalValue + metalValue + deuteriumValue;
         if (((planet === 16 || _isNearToMyPlanets(galaxy, system)) && total > DEBRIS_ALERT_THRESHOLD) || total > DEBRIS_ALERT_THRESHOLD * 4) {
             found = true;
-            console.log('Recording large debris with total ' + total)
+            console.log('Recording large debris at ' + galaxy + '-' + system + '-' + planet + ' with total ' + _toKMNumber(total))
             _processFoundDebris(galaxy, system, metalValue, kristalValue, deuteriumValue, recyclerValue, planet);
             if (debrisStatus) {
                 debrisStatus.foundDebrisCount++;
