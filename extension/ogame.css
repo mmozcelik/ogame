@@ -99,7 +99,9 @@ span.status_abbr_inactive {
 .zoro-check-debris {
     position: absolute;
     left: 0px;
-    top: 800px;
+    top: 650px;
+    width: 200px;
+    overflow: visible;
     display: grid;
     z-index: 100000;
     font-size: 80%;
@@ -129,7 +131,8 @@ span.status_abbr_inactive {
 
 .zoro-button {
     width: fit-content;
-    font-size: 11px;
+    font-size: 12px;
+    cursor: pointer;
 }
 
 .zoro-skin .cellPlayerName {
@@ -155,5 +158,55 @@ span.status_abbr_inactive {
 }
 
 .zoro-fleet-button {
-    margin-left: 10px;
+    display: block;
+    margin: 8px 0;
+    width: 130px;
+    font-size: 14px;
+    padding: 3px;
+    border-radius: 4px;
+}
+
+.zoro-overlay {
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+    background: black;
+    z-index: 100000;
+    position: fixed;
+}
+
+.zoro-skin notification-container {
+    right: 50% !important;
+}
+
+.zoro-skin .notification-error {
+    background-color: darkred;
+}
+
+.zoro-skin #siteFooter {
+    display: none;
+}
+
+.zoro-skin .secondCat.items.groupitems,
+.zoro-skin .values.items.groupitems,
+.zoro-skin .planetData,
+.zoro-skin #empireTab,
+.zoro-skin #boxBG {
+    display: none;
+}
+
+.zoro-skin #empireComponent #wrapTL {
+    height: 167px;
+}
+
+.zoro-skin #mainWrapper {
+    padding: 0!important;
+}
+
+.zoro-empire {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
 }

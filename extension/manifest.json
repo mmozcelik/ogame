@@ -29,6 +29,7 @@
         "ogame-common.js",
         "ogame-creds.js",
         "ogame-galaxy.js",
+        "ogame-empire.js",
         "ogame-messages.js",
         "ogame-fleet.js",
         "ogame-lobby.js"

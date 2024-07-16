@@ -282,9 +282,10 @@ var fn = function () {
         debrisAnchorElement.className = 'zoro-debris-item' + (debrisItem.sent ? ' text-blue' : '') + (blacklisted ? ' text-red' : '');
         debrisAnchorElement.setAttribute('href', _getGalaxyUrl(debrisItem.galaxy, debrisItem.system));
         debrisAnchorElement.innerText = _getCoordStr(debrisItem.galaxy, debrisItem.system, debrisItem.planet)
-            + ' ' + _toKMNumber(debrisItem.metal) + ' Metal + ' + _toKMNumber(debrisItem.kristal) + ' Kristal -- '
+            + ' ' + _toKMNumber(debrisItem.metal) + ' M+' + _toKMNumber(debrisItem.kristal) + ' K -- '
             + _getTimeDiff(debrisItem.addedAt) + (debrisItem.fetched ? ' *' : '');
         debrisItemElement.appendChild(debrisAnchorElement);
+        debrisItemElement.appendChild(document.createElement('br'))
 
         if (!debrisItem.sent) {
             var element = document.createElement('a');

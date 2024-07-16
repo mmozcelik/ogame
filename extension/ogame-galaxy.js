@@ -146,6 +146,7 @@ var fn = function () {
             console.log('Debris check stopped at system ' + debrisStatus.currentSystem + ' with found debris count ' + debrisStatus.foundDebrisCount + ' in ' + (new Date().getTime() - debrisStatus.lastTime) / 1000 + ' sec.');
         } else {
             _getGalaxyDataWithAjax(debrisStatus.galaxy, debrisStatus.currentSystem, function (data) {
+                localStorage.setItem('debris_check_last_time', new Date().getTime())
                 if (data) {
                     var found1 = _checkAjaxExpeditionContent(data, debrisStatus.galaxy, debrisStatus.currentSystem, debrisStatus);
                     var found2 = _checkAjaxPlanetDebrisContent(data, debrisStatus.galaxy, debrisStatus.currentSystem, debrisStatus);
